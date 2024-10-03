@@ -18,7 +18,6 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-
         {children}
       </body>
     </html>

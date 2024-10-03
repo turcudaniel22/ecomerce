@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div>
       <Button asChild>
-        <LoginLink>Sign in</LoginLink>
+        <LoginLink>Login</LoginLink>
       </Button>
       <Button asChild>
         <RegisterLink>Sign up</RegisterLink>
