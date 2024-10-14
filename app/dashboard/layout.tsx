@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import DashboardNavigation from "../components/DahboardNavigation";
+import DashboardNavigation from "../components/dashboard/DahboardNavigation";
 import { Button } from "@/components/ui/button";
-import { CircleUser, Icon, MenuIcon } from "lucide-react";
+import { CircleUser, MenuIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

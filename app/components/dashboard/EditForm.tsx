@@ -1,6 +1,6 @@
 "use client";
-import { createProduct } from "@/app/actions";
-import { UploadDropzone } from "@/app/lib/uploadthing";
+
+import { categories } from "@/app/lib/categories";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@radix-ui/react-dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -20,21 +21,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+
 import { ChevronLeft, XIcon } from "lucide-react";
 import Link from "next/link";
+
+import SubmitButtons from "../SubmitButtons";
+import { UploadDropzone } from "@/app/lib/uploadthing";
 import { useFormState } from "react-dom";
+import { editProduct } from "@/app/actions";
+import { productSchema } from "@/app/lib/zodSchemas";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { productSchema } from "@/app/lib/zodSchemas";
-import { useState } from "react";
 import Image from "next/image";
-import { categories } from "@/app/lib/categories";
-import SubmitButtons from "@/app/components/SubmitButtons";
+import { useState } from "react";
+import { type $Enums } from "@prisma/client";
 
-const ProductCreateRoute = () => {
-  const [images, setImages] = useState<string[]>([]);
-  const [lastResult, action] = useFormState(createProduct, undefined);
+interface iAppProps {
+  data: {
+    id: string;
+    createdAt: Date;
+    name: string;
+    description: string;
+    status: $Enums.ProductStatus;
+    price: number;
+    images: string[];
+    category: $Enums.Category;
+    isFeatured: boolean;
+  };
+}
+
+const EditForm = ({ data }: iAppProps) => {
+  const [images, setImages] = useState<string[]>(data.images);
+  const [lastResult, action] = useFormState(editProduct, undefined);
   const [form, fields] = useForm({
     lastResult,
     onValidate({ formData }) {
@@ -51,19 +69,20 @@ const ProductCreateRoute = () => {
   return (
     <div>
       <form id={form.id} onSubmit={form.onSubmit} action={action}>
+        <input type="hidden" name="productId" value={data.id} />
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" asChild>
             <Link href="/dashboard/products">
               <ChevronLeft className="w-4 h-4" />
             </Link>
           </Button>
-          <h1 className="text-xl font-semibold tracking-tight">New Product</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Edit Product</h1>
         </div>
         <Card>
           <CardHeader>
             <CardTitle>Product Details</CardTitle>
             <CardDescription>
-              In this form you can create your product
+              In this form you can update your product
             </CardDescription>
             <CardContent>
               <div className="flex flex-col gap-6">
@@ -73,7 +92,7 @@ const ProductCreateRoute = () => {
                     type="text"
                     key={fields.name.key}
                     name={fields.name.name}
-                    defaultValue={fields.name.initialValue}
+                    defaultValue={data.name}
                     className="w-full"
                     placeholder="Product Name"
                   />
@@ -86,7 +105,7 @@ const ProductCreateRoute = () => {
                   placeholder="Write your description right here ..."
                   key={fields.description.key}
                   name={fields.description.name}
-                  defaultValue={fields.description.initialValue}
+                  defaultValue={data.description}
                 />
                 <p className="text-red-500">{fields.description.errors}</p>
               </div>
@@ -97,7 +116,7 @@ const ProductCreateRoute = () => {
                   type="number"
                   key={fields.price.key}
                   name={fields.price.name}
-                  defaultValue={fields.price.initialValue}
+                  defaultValue={data.price}
                 />
                 <p className="text-red-500">{fields.price.errors}</p>
               </div>
@@ -107,16 +126,15 @@ const ProductCreateRoute = () => {
                   className="mb-3"
                   key={fields.isFeatured.key}
                   name={fields.isFeatured.name}
-                  defaultValue={fields.isFeatured.initialValue}
+                  defaultChecked={data.isFeatured}
                 />
-                <p></p>
               </div>
               <div className="flex flex-col gap-3">
                 <Label>Status</Label>
                 <Select
                   key={fields.status.key}
                   name={fields.status.name}
-                  defaultValue={fields.status.initialValue}
+                  defaultValue={data.status}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Status" />
@@ -132,7 +150,11 @@ const ProductCreateRoute = () => {
 
               <div className="flex flex-col gap-3">
                 <Label>Category</Label>
-                <Select key={fields.category.key} name={fields.category.name}>
+                <Select
+                  key={fields.category.key}
+                  name={fields.category.name}
+                  defaultValue={data.category}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
@@ -190,7 +212,7 @@ const ProductCreateRoute = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <SubmitButtons text="Create Product" />
+              <SubmitButtons text="Edit Product" />
             </CardFooter>
           </CardHeader>
         </Card>
@@ -199,4 +221,4 @@ const ProductCreateRoute = () => {
   );
 };
 
-export default ProductCreateRoute;
+export default EditForm;

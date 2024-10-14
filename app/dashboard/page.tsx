@@ -6,14 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Car,
-  DollarSign,
-  Euro,
-  PartyPopper,
-  ShoppingBag,
-  User2,
-} from "lucide-react";
+import { DollarSign, PartyPopper, ShoppingBag, User2 } from "lucide-react";
 
 const page = () => {
   return (
